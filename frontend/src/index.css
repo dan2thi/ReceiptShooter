@@ -1,0 +1,105 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1c302c;
+  background: #f7f7f2;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button { font: inherit; }
+button:focus-visible { outline: 3px solid #e6a34f; outline-offset: 3px; }
+button:disabled { cursor: not-allowed; }
+svg { display: block; width: 24px; height: 24px; flex: none; }
+
+.app-shell { width: min(100%, 680px); margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 22px max(32px, env(safe-area-inset-bottom)); }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 750; letter-spacing: -.035em; }
+.brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: #fff; background: #286c5d; }
+.brand-mark svg { width: 21px; height: 21px; }
+.intro { padding: 48px 0 36px; }
+.eyebrow { margin: 0 0 10px; color: #68827a; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 14px; font-size: clamp(34px, 8.5vw, 48px); line-height: 1.12; letter-spacing: -.055em; }
+h1 span { color: #679487; }
+.intro-copy { max-width: 360px; margin-bottom: 25px; color: #62736d; font-size: 15px; line-height: 1.6; }
+.capture-button { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 56px; border: 0; border-radius: 13px; color: white; background: #286c5d; font-weight: 700; cursor: pointer; box-shadow: 0 5px 14px #286c5d1c; }
+.capture-button:not(:disabled):active { background: #1e574b; }
+.capture-button:disabled { opacity: .55; }
+.capture-button svg { width: 21px; height: 21px; }
+.capture-note { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 13px 0 0; color: #778881; font-size: 12px; }
+.status-dot, .pending-badge span { width: 6px; height: 6px; border-radius: 50%; background: #59a786; }
+.receipts-section { padding: 28px 0 30px; border-top: 1px solid #e2e8df; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.section-heading .eyebrow { margin-bottom: 6px; }
+h2 { margin-bottom: 0; font-size: 23px; letter-spacing: -.04em; }
+.receipt-count { color: #82918a; font-size: 12px; white-space: nowrap; }
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 32px 15px; border: 1px dashed #d4ded5; border-radius: 15px; text-align: center; background: #fcfdf9; }
+.empty-icon { display: grid; place-items: center; width: 48px; height: 48px; margin-bottom: 15px; border-radius: 50%; color: #7c9a8b; background: #edf4ed; }
+.empty-state h3 { margin-bottom: 5px; font-size: 15px; }
+.empty-state p, .loading { margin-bottom: 0; color: #82918a; font-size: 13px; line-height: 1.5; }
+.receipt-list { margin: 0; padding: 0; list-style: none; }
+.receipt-row { display: flex; align-items: center; gap: 12px; min-height: 78px; padding: 12px 0; border-bottom: 1px solid #e5eae3; }
+.date-tile { display: flex; flex: none; flex-direction: column; justify-content: center; align-items: center; width: 48px; height: 50px; border-radius: 10px; color: #3e7866; background: #e8f1e8; }
+.date-tile span { font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.date-tile strong { font-size: 19px; line-height: 1.1; }
+.receipt-details { display: flex; flex: 1; min-width: 0; flex-direction: column; align-items: flex-start; gap: 7px; }
+.receipt-details time { font-size: 13px; font-weight: 650; line-height: 1.3; }
+.photo-count { color: #62736d; font-size: 12px; }
+.pending-badge, .uploaded-badge { display: inline-flex; align-items: center; gap: 5px; color: #668675; font-size: 11px; font-weight: 650; }
+.pending-badge span { width: 5px; height: 5px; background: #d9a553; }
+.uploaded-badge span { width: 5px; height: 5px; border-radius: 50%; background: #288454; }
+.receipt-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; max-width: 185px; }
+.view-button, .delete-button, .close-button { min-height: 44px; border: 0; background: transparent; cursor: pointer; }
+.view-button { min-width: 44px; padding: 0 3px; color: #286c5d; font-size: 13px; font-weight: 750; }
+.delete-button { display: grid; flex: none; place-items: center; width: 44px; padding: 0; color: #8b9a91; }
+.delete-button svg { width: 20px; height: 20px; }
+.upload-section { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 20px; border: 1px solid #e3e9e1; border-radius: 15px; background: #eff3ec; }
+.upload-section .eyebrow { margin-bottom: 7px; }
+.upload-section h2 { margin-bottom: 6px; font-size: 17px; }
+.upload-section p:not(.eyebrow):not(.visually-hidden) { max-width: 330px; margin-bottom: 0; color: #778980; font-size: 12px; line-height: 1.5; }
+.upload-section label { width: 100%; font-size: 13px; font-weight: 700; }
+.upload-section input { width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid #bdcfc1; border-radius: 9px; font: inherit; }
+.account-section { margin-bottom: 28px; }
+.account-section > * { width: 100%; }
+.account-form { display: grid; gap: 8px; width: 100%; }
+.account-form label { margin-top: 4px; }
+.account-form select { min-height: 44px; padding: 0 12px; border: 1px solid #bdcfc1; border-radius: 9px; font: inherit; background: #fff; }
+.account-form button, .account-section .notice-actions button { min-height: 44px; padding: 0 12px; border: 1px solid #b8cfc0; border-radius: 9px; background: #fff; color: #286c5d; font-weight: 700; }
+.user-management { padding-top: 18px; border-top: 1px solid #d3ded4; }
+.user-management h3 { margin-bottom: 8px; font-size: 15px; }
+.managed-users { margin: 0 0 20px; padding: 0; list-style: none; }
+.managed-users li { padding: 12px 0; border-bottom: 1px solid #d3ded4; font-size: 13px; }
+.managed-users span { display: block; margin-top: 4px; color: #62736d; }
+.upload-section .upload-status { width: 100%; color: #286c5d; font-weight: 700; }
+.upload-button { min-height: 44px; padding: 0 13px; border: 1px solid #286c5d; border-radius: 9px; color: #fff; background: #286c5d; font-weight: 700; cursor: pointer; }
+.upload-button:disabled { opacity: .5; }
+.storage-note { margin: 18px 2px 0; color: #7f8e86; font-size: 12px; line-height: 1.55; }
+.notice { margin: 0 0 14px; padding: 15px; border: 1px solid #e4d3b1; border-radius: 12px; color: #614827; background: #fff8e9; font-size: 13px; line-height: 1.5; }
+.notice p { margin: 4px 0 0; }
+.error-notice { border-color: #ebcbc2; color: #743d32; background: #fff4f0; }
+.notice-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.notice-actions button, .retry-storage { min-height: 44px; padding: 0 14px; border: 1px solid #d2b88b; border-radius: 8px; color: #614827; background: #fffdf8; font-weight: 700; cursor: pointer; }
+.notice-actions .text-button { border-color: transparent; background: transparent; }
+.retry-storage { margin-bottom: 15px; }
+.photo-dialog { width: min(94vw, 650px); max-height: 90dvh; overflow-y: auto; padding: 18px; border: 0; border-radius: 16px; color: #1c302c; background: #f7f7f2; box-shadow: 0 15px 60px #10251d66; }
+.photo-dialog::backdrop { background: #142720b8; }
+.photo-dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.photo-dialog-header .eyebrow { margin-bottom: 5px; }
+.photo-dialog-header h2 { font-size: 16px; }
+.close-button { flex: none; width: 44px; border-radius: 50%; color: #526d61; font-size: 30px; line-height: 1; }
+.photo-dialog img { display: block; max-width: 100%; max-height: 46dvh; margin: auto; object-fit: contain; }
+.done-button, .photo-controls button { min-height: 44px; padding: 0 13px; border: 1px solid #cddbd0; border-radius: 9px; color: #286c5d; background: #fff; font-weight: 700; cursor: pointer; }
+.done-button:disabled, .photo-controls button:disabled { opacity: .45; }
+.photo-position { margin: 0 0 10px; color: #62736d; text-align: center; font-size: 13px; font-weight: 700; }
+.photo-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
+.photo-controls button { flex: 1 1 auto; }
+.photo-help { margin: 12px 0 0; color: #62736d; font-size: 12px; line-height: 1.5; }
+.add-photo-button { margin-top: 16px; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+@media (min-width: 600px) {
+  .app-shell { padding-right: 40px; padding-left: 40px; }
+  .intro { padding-top: 70px; }
+}

@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: ReceiptShooter
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+  flyway:
+    enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: ${MAX_PHOTO_BYTES:12582912}
+      max-request-size: ${MAX_REQUEST_BYTES:52428800}
+      file-size-threshold: ${MAX_PHOTO_BYTES:12582912}
+  session:
+    timeout: ${SESSION_TIMEOUT_SECONDS:2592000}s
+    jdbc:
+      initialize-schema: never
+
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  forward-headers-strategy: framework
+  error:
+    include-message: never
+
+logging:
+  level:
+    com.zaxxer.hikari: OFF
+    org.flywaydb.core.FlywayExecutor: WARN
+    org.mariadb.jdbc: OFF
+    org.hibernate.orm.connections.pooling: WARN
+    org.hibernate.orm.jdbc.error: OFF
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: OFF
+
+receipt:
+  session:
+    seconds: ${SESSION_TIMEOUT_SECONDS:2592000}
+  bootstrap:
+    username: ${ADMIN_USERNAME:}
+    password: ${ADMIN_INITIAL_PASSWORD:}
+  recovery:
+    enabled: ${ACCOUNT_RECOVERY:false}
+    username: ${RECOVERY_USERNAME:}
+    password: ${RECOVERY_TEMP_PASSWORD:}
+  upload:
+    max-photo-bytes: ${MAX_PHOTO_BYTES:12582912}
+    max-total-bytes: ${MAX_RECEIPT_BYTES:50331648}
+    max-photos: ${MAX_PHOTOS:20}
+    max-pixels: ${MAX_IMAGE_PIXELS:80000000}
+    max-concurrent: ${MAX_CONCURRENT_UPLOADS:2}
