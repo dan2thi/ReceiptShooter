@@ -1,4 +1,4 @@
-package com.dan.receiptshooter.service;
+package com.dan.receiptshooter.service.impl;
 
 import com.dan.receiptshooter.dto.ReceiptApi;
 import com.dan.receiptshooter.exception.InvalidUploadException;

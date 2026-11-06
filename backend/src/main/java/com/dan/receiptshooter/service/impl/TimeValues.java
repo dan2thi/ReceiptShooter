@@ -1,4 +1,4 @@
-package com.dan.receiptshooter.service;
+package com.dan.receiptshooter.service.impl;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

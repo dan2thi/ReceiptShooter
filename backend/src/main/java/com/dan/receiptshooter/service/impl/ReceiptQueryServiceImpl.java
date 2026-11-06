@@ -1,4 +1,4 @@
-package com.dan.receiptshooter.service;
+package com.dan.receiptshooter.service.impl;
 
 import com.dan.receiptshooter.dto.ReceiptApi;
 import com.dan.receiptshooter.entity.Receipt;
@@ -8,6 +8,8 @@ import com.dan.receiptshooter.exception.ReceiptNotFoundException;
 import com.dan.receiptshooter.repository.PhotoBlobStore;
 import com.dan.receiptshooter.repository.ReceiptPhotoRepository;
 import com.dan.receiptshooter.repository.ReceiptRepository;
+import com.dan.receiptshooter.service.ReceiptQueryService;
+import com.dan.receiptshooter.service.model.StoredImage;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,20 +18,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class ReceiptQueries {
+public class ReceiptQueryServiceImpl implements ReceiptQueryService, ExistingReceiptLookup {
     private final ReceiptRepository receipts;
     private final ReceiptPhotoRepository photos;
     private final PhotoBlobStore blobs;
 
-    ReceiptQueries(ReceiptRepository receipts, ReceiptPhotoRepository photos, PhotoBlobStore blobs) {
+    ReceiptQueryServiceImpl(ReceiptRepository receipts, ReceiptPhotoRepository photos, PhotoBlobStore blobs) {
         this.receipts = receipts;
         this.photos = photos;
         this.blobs = blobs;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Optional<ReceiptApi.UploadAcknowledgement> existing(String uploader, ReceiptApi.UploadMetadata request,
-                                                                 List<ValidatedPhoto> input) {
+                                                               List<ValidatedPhoto> input) {
         var found = receipts.findByOwner_UsernameAndReceiptUuid(uploader, request.receiptId().toString());
         if (found.isEmpty()) return Optional.empty();
         Receipt receipt = found.get();
@@ -53,23 +56,26 @@ public class ReceiptQueries {
                 throw new ReceiptConflictException();
             }
         }
-        return Optional.of(acknowledgement(receipt));
+        return Optional.of(ReceiptMapper.acknowledgement(receipt));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<ReceiptApi.ReceiptSummary> list(String uploader) {
         return receipts.findAllByOwner_UsernameOrderByCapturedAtDescIdDesc(uploader)
-                .stream().map(ReceiptQueries::summary).toList();
+                .stream().map(ReceiptMapper::summary).toList();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public ReceiptApi.ReceiptDetails details(String uploader, UUID receiptId) {
         Receipt receipt = requireReceipt(uploader, receiptId);
         List<ReceiptApi.PhotoMetadata> photoMetadata = photos.findAllByReceiptIdOrderBySequenceAsc(receipt.getId())
-                .stream().map(ReceiptQueries::photoMetadata).toList();
-        return new ReceiptApi.ReceiptDetails(summary(receipt), photoMetadata);
+                .stream().map(ReceiptMapper::photoMetadata).toList();
+        return new ReceiptApi.ReceiptDetails(ReceiptMapper.summary(receipt), photoMetadata);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public StoredImage image(String uploader, UUID receiptId, UUID photoId) {
         Receipt receipt = requireReceipt(uploader, receiptId);
@@ -85,23 +91,4 @@ public class ReceiptQueries {
     private Receipt requireReceipt(String uploader, UUID id) {
         return receipts.findByOwner_UsernameAndReceiptUuid(uploader, id.toString()).orElseThrow(ReceiptNotFoundException::new);
     }
-
-    static ReceiptApi.UploadAcknowledgement acknowledgement(Receipt receipt) {
-        return new ReceiptApi.UploadAcknowledgement(UUID.fromString(receipt.getReceiptUuid()),
-                TimeValues.fromDatabase(receipt.getUploadedAt()), receipt.getPhotoCount(), receipt.getUploadStatus());
-    }
-
-    private static ReceiptApi.ReceiptSummary summary(Receipt receipt) {
-        return new ReceiptApi.ReceiptSummary(UUID.fromString(receipt.getReceiptUuid()),
-                TimeValues.fromDatabase(receipt.getCapturedAt()), TimeValues.fromDatabase(receipt.getUploadedAt()),
-                receipt.getOwner().getUsername(), receipt.getPhotoCount(), receipt.getUploadStatus());
-    }
-
-    private static ReceiptApi.PhotoMetadata photoMetadata(ReceiptPhoto photo) {
-        return new ReceiptApi.PhotoMetadata(UUID.fromString(photo.getPhotoUuid()), photo.getSequence(),
-                TimeValues.fromDatabase(photo.getCapturedAt()), photo.getOriginalFilename(), photo.getContentType(),
-                photo.getFileSize(), photo.getSha256());
-    }
-
-    public record StoredImage(String contentType, byte[] data) {}
 }

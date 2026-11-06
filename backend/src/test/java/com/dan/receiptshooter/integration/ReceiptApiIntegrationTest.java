@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequ
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.dan.receiptshooter.domain.AccountRole;
 import com.dan.receiptshooter.entity.UserAccount;
 import com.dan.receiptshooter.repository.UserAccountRepository;
 import com.dan.receiptshooter.security.AccountPrincipal;
@@ -58,7 +59,7 @@ class ReceiptApiIntegrationTest {
     void clearTestDatabase() {
         jdbc.update("DELETE FROM receipts");
         jdbc.update("UPDATE users SET must_change_password = FALSE WHERE username = ?", "test-user");
-        if (users.findByUsername("other-user").isEmpty()) users.saveAndFlush(new UserAccount("other-user", encoder.encode("other-test-password"), UserAccount.Role.USER));
+        if (users.findByUsername("other-user").isEmpty()) users.saveAndFlush(new UserAccount("other-user", encoder.encode("other-test-password"), AccountRole.USER));
         jdbc.update("UPDATE users SET must_change_password = FALSE WHERE username = ?", "other-user");
         clearInvocations(blobs);
     }

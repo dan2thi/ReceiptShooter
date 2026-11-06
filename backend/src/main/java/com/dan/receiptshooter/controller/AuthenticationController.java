@@ -1,6 +1,6 @@
 package com.dan.receiptshooter.controller;
 
-import com.dan.receiptshooter.entity.UserAccount;
+import com.dan.receiptshooter.domain.AccountRole;
 import com.dan.receiptshooter.service.AccountService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -10,13 +10,19 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthenticationController {
     private final AccountService accounts;
-    AuthenticationController(AccountService accounts) { this.accounts = accounts; }
+    AuthenticationController(AccountService accounts) {
+        this.accounts = accounts;
+    }
 
     @GetMapping("/csrf")
     ResponseEntity<CsrfResponse> csrf(CsrfToken token) {
@@ -46,6 +52,6 @@ class AuthenticationController {
     }
 
     record CsrfResponse(String headerName, String token) {}
-    record SessionView(String username, UserAccount.Role role, boolean mustChangePassword) {}
+    record SessionView(String username, AccountRole role, boolean mustChangePassword) {}
     record PasswordChange(@NotBlank String currentPassword, @NotBlank String newPassword) {}
 }

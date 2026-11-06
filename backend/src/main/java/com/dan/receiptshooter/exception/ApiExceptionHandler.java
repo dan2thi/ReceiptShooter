@@ -19,7 +19,13 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 class ApiExceptionHandler {
     @ExceptionHandler(AccountException.class)
     ResponseEntity<ReceiptApi.ErrorResponse> account(AccountException error) {
-        return response(error.getStatus(), error.getMessage());
+        HttpStatus status = switch (error.getReason()) {
+            case INVALID_INPUT -> HttpStatus.BAD_REQUEST;
+            case UNAUTHENTICATED -> HttpStatus.UNAUTHORIZED;
+            case NOT_FOUND -> HttpStatus.NOT_FOUND;
+            case CONFLICT -> HttpStatus.CONFLICT;
+        };
+        return response(status, error.getMessage());
     }
 
     @ExceptionHandler(InvalidUploadException.class)

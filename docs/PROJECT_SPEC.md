@@ -13,8 +13,13 @@ running Home Assistant OS, so keep resource use and operational complexity low.
 - `backend/`: Java 21 and Spring Boot with Spring Data JPA, Hibernate, Flyway
   and Spring Security. Receipt metadata and original photo BLOBs are stored in
   MariaDB. Database location and credentials come from environment variables.
-  Java packages separate controllers, DTOs, entities, repositories, services,
-  configuration, security and exception handling.
+  Java packages separate controllers, DTOs, domain types, entities, repositories,
+  services, configuration, security and exception handling. Account and receipt
+  controllers depend on service interfaces; implementations and internal upload
+  transaction helpers live in `service.impl`. Photo BLOB access uses a storage
+  interface with a JDBC implementation. Account role values remain `ADMIN` and
+  `USER` in both the database and API. Account failures use application-level
+  reasons, which the API exception handler maps to the existing HTTP responses.
 - The applications remain independently buildable within one Git repository.
   For integrated releases, build `frontend/dist` first and run a clean Maven
   package; Maven includes the PWA as Spring Boot classpath static resources.

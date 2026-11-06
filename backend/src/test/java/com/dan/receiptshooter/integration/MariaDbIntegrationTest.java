@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import com.dan.receiptshooter.domain.AccountRole;
 import com.dan.receiptshooter.entity.UserAccount;
 import com.dan.receiptshooter.repository.UserAccountRepository;
 import com.dan.receiptshooter.security.AccountPrincipal;
@@ -82,7 +83,7 @@ class MariaDbIntegrationTest {
 
     @BeforeEach
     void prepareTestUser() {
-        if (users.findByUsername("test-user").isEmpty()) users.saveAndFlush(new UserAccount("test-user", encoder.encode("mariadb-test-password"), UserAccount.Role.USER));
+        if (users.findByUsername("test-user").isEmpty()) users.saveAndFlush(new UserAccount("test-user", encoder.encode("mariadb-test-password"), AccountRole.USER));
         jdbc.update("UPDATE users SET must_change_password = FALSE WHERE username = ?", "test-user");
     }
 
