@@ -39,9 +39,12 @@ performed by the build script.
 ## Backend configuration and local startup
 
 Backend Java code is grouped under `com.dan.receiptshooter` by responsibility:
-`controller`, `dto`, `entity`, `repository`, `service`, `config`,
-`security`, and `exception`. Spring Data repository interfaces live in
-`repository`; upload validation and transaction handling remain in `service`.
+`controller`, `dto`, `domain`, `entity`, `repository`, `service`, `config`,
+`security`, and `exception`. The account and receipt service interfaces define
+the application operations; their implementations and internal transaction and
+validation helpers live in `service.impl`. Shared service result types live in
+`service.model`. Spring Data repository interfaces and the photo BLOB storage
+contract live in `repository`; the JDBC BLOB implementation is in `repository.jdbc`.
 
 Set these environment variables before starting the backend:
 

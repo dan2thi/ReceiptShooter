@@ -1,4 +1,4 @@
-package com.dan.receiptshooter.service;
+package com.dan.receiptshooter.service.impl;
 
 import com.dan.receiptshooter.dto.ReceiptApi;
 import com.dan.receiptshooter.entity.Receipt;
@@ -38,6 +38,6 @@ class ReceiptWriter {
             blobs.store(stored.getId(), photo.verifiedBytes());
         }
         // The transactional proxy commits before returning this value to the caller.
-        return ReceiptQueries.acknowledgement(receipt);
+        return ReceiptMapper.acknowledgement(receipt);
     }
 }

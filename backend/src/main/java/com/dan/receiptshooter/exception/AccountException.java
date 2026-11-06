@@ -1,9 +1,24 @@
 package com.dan.receiptshooter.exception;
 
-import org.springframework.http.HttpStatus;
+import java.util.Objects;
 
-public class AccountException extends RuntimeException {
-    private final HttpStatus status;
-    public AccountException(HttpStatus status, String message) { super(message); this.status = status; }
-    public HttpStatus getStatus() { return status; }
+/** Account operation failure, independent of how an API represents it. */
+public final class AccountException extends RuntimeException {
+    public enum Reason {
+        INVALID_INPUT,
+        UNAUTHENTICATED,
+        NOT_FOUND,
+        CONFLICT
+    }
+
+    private final Reason reason;
+
+    public AccountException(Reason reason, String message) {
+        super(message);
+        this.reason = Objects.requireNonNull(reason);
+    }
+
+    public Reason getReason() {
+        return reason;
+    }
 }

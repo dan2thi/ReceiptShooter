@@ -2,7 +2,7 @@ package com.dan.receiptshooter.integration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.dan.receiptshooter.entity.UserAccount;
+import com.dan.receiptshooter.domain.AccountRole;
 import com.dan.receiptshooter.repository.UserAccountRepository;
 import com.dan.receiptshooter.service.AccountService;
 import java.net.URI;
@@ -47,7 +47,8 @@ class AuthenticationIntegrationTest {
     @Test @Order(1)
     void bootstrapHashesTheInitialPasswordAndNeverOverwritesAnExistingAdmin() {
         var admin = users.findByUsername("auth-admin").orElseThrow();
-        assertEquals(UserAccount.Role.ADMIN, admin.getRole());
+        assertEquals(AccountRole.ADMIN, admin.getRole());
+        assertEquals("ADMIN", jdbc.queryForObject("SELECT role FROM users WHERE username = ?", String.class, "auth-admin"));
         assertTrue(admin.isEnabled());
         assertTrue(admin.isMustChangePassword());
         assertNotEquals(INITIAL, admin.getPasswordHash());
@@ -85,6 +86,13 @@ class AuthenticationIntegrationTest {
         adminCookie = login("auth-admin", CHANGED);
         adminCsrf = csrf(adminCookie);
 
+        assertEquals(400, send("POST", "/api/auth/password", adminCookie, adminCsrf.csrf(), "application/json",
+                "{\"currentPassword\":\"incorrect-password\",\"newPassword\":\"another-valid-password\"}").statusCode());
+        assertEquals(400, send("POST", "/api/admin/users", adminCookie, adminCsrf.csrf(), "application/json",
+                "{\"username\":\"invalid username\",\"temporaryPassword\":\"temporary-user-password\",\"role\":\"USER\"}").statusCode());
+        assertEquals(404, send("PUT", "/api/admin/users/9223372036854775807/enabled", adminCookie, adminCsrf.csrf(),
+                "application/json", "{\"enabled\":true}").statusCode());
+
         // A second repository instance can read the authenticated session from JDBC.
         String encodedId = adminCookie.substring(adminCookie.indexOf('=') + 1);
         String sessionId = new String(Base64.getDecoder().decode(encodedId), StandardCharsets.UTF_8);
@@ -100,8 +108,10 @@ class AuthenticationIntegrationTest {
         var created = send("POST", "/api/admin/users", adminCookie, adminCsrf.csrf(), "application/json",
                 "{\"username\":\"family-user\",\"temporaryPassword\":\"temporary-user-password\",\"role\":\"USER\"}");
         assertEquals(201, created.statusCode());
+        assertTrue(created.body().contains("\"role\":\"USER\""));
         assertFalse(created.body().contains("password"));
         var member = users.findByUsername("family-user").orElseThrow();
+        assertEquals("USER", jdbc.queryForObject("SELECT role FROM users WHERE username = ?", String.class, "family-user"));
         assertTrue(member.isMustChangePassword());
         assertTrue(encoder.matches("temporary-user-password", member.getPasswordHash()));
         assertEquals(409, send("PUT", "/api/admin/users/" + users.findByUsername("auth-admin").orElseThrow().getId() + "/enabled",
@@ -163,7 +173,7 @@ class AuthenticationIntegrationTest {
     @Test @Order(5)
     void concurrentDisablesCannotRemoveTheLastActiveAdministrator() throws Exception {
         var first = users.findByUsername("auth-admin").orElseThrow();
-        var second = accounts.create("second-admin", "second-admin-temporary-password", UserAccount.Role.ADMIN);
+        var second = accounts.create("second-admin", "second-admin-temporary-password", AccountRole.ADMIN);
         var start = new java.util.concurrent.CountDownLatch(1);
         try (var workers = java.util.concurrent.Executors.newFixedThreadPool(2)) {
             var a = workers.submit(() -> { start.await(); accounts.setEnabled(first.getId(), false); return true; });
@@ -175,7 +185,7 @@ class AuthenticationIntegrationTest {
                 catch (java.util.concurrent.ExecutionException expected) { /* The second disable must fail. */ }
             }
             assertEquals(1, succeeded);
-            assertEquals(1, users.countByRoleAndEnabledTrue(UserAccount.Role.ADMIN));
+            assertEquals(1, users.countByRoleAndEnabledTrue(AccountRole.ADMIN));
         }
     }
 

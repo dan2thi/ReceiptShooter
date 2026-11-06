@@ -1,4 +1,4 @@
-package com.dan.receiptshooter.service;
+package com.dan.receiptshooter.service.impl;
 
 import java.io.IOException;
 import java.time.Instant;
