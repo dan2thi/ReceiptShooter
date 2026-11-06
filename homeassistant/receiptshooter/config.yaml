@@ -1,0 +1,29 @@
+name: ReceiptShooter
+version: "3.0.0"
+slug: receiptshooter
+description: Offline receipt capture with a private MariaDB backend
+arch:
+  - amd64
+startup: application
+boot: auto
+init: true
+timeout: 60
+watchdog: "http://[HOST]:[PORT:8080]/api/health"
+ports:
+  8080/tcp: 8090
+ports_description:
+  8080/tcp: HTTP listener for the trusted HTTPS reverse proxy
+options:
+  db_url: "jdbc:mariadb://core-mariadb:3306/receiptshooterdb"
+  db_username: null
+  db_password: null
+  java_heap_mb: 320
+  session_timeout_seconds: 2592000
+schema:
+  db_url: "str(1,)"
+  db_username: "str(1,)"
+  db_password: "password(1,)"
+  java_heap_mb: "int(256,1024)"
+  session_timeout_seconds: "int(60,7776000)"
+  admin_username: "str?"
+  admin_initial_password: "password?"

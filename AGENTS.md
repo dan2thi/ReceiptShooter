@@ -44,3 +44,10 @@ Keep the project specification accurate when requirements or architecture change
 - Do not change Home Assistant tables or database users. Use a dedicated,
   disposable database for MariaDB integration tests and never clean a household
   database. Run the backend Maven tests and report skipped MariaDB checks.
+- Home Assistant packaging lives under `homeassistant/`; build the frontend and
+  backend in an isolated workspace and stage only the local app files and JAR.
+  Keep secrets, backups, certificates and generated artifacts out of Git and
+  the container build context. Preserve the PWA origin and manual upload flow.
+- Never run a Flyway migration against the household database while an older
+  backend is writing. Back up and verify the schema before deployment; leave
+  proxy cutover and destructive restore operations to the documented manual flow.

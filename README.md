@@ -14,6 +14,19 @@ authenticated API together; original server-side images are stored in MariaDB. S
 Examples use `https://receipts.example` as a placeholder; substitute a hostname
 and certificate trusted by your devices.
 
+## Home Assistant OS deployment
+
+The optional local-app package serves the same integrated PWA and API from a
+Java 21 container and uses the existing dedicated MariaDB database. On Windows,
+run `powershell -NoProfile -ExecutionPolicy Bypass -File .\homeassistant\build.ps1`
+in PowerShell to build, test and stage the app
+folder without replacing the running backend JAR. Copy the reported folder into
+Home Assistant's `local_apps` directory and follow the
+[installation, configuration, backup and cutover guide](homeassistant/receiptshooter/DOCS.md).
+Confirm the server architecture and back up the database before first startup.
+The documented HTTPS proxy remains in place; no deployment or cutover is
+performed by the build script.
+
 ## Prerequisites
 
 - JDK 21 with JAVA_HOME configured; Maven is downloaded by the included wrapper.

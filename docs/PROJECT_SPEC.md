@@ -5,8 +5,6 @@
 ReceiptShooter is a private household receipt collection application. Household
 members use iPhones. The deployment target is a modest home server, potentially
 running Home Assistant OS, so keep resource use and operational complexity low.
-The precise deployment and storage arrangement is a later decision; do not
-assume this milestone deploys the backend.
 
 ## Architecture
 
@@ -30,6 +28,11 @@ assume this milestone deploys the backend.
   Spring Session stores sessions in MariaDB and issues persistent Secure,
   HttpOnly, SameSite=Lax cookies. Cookie-authenticated mutations require CSRF
   tokens. The PWA does not persist passwords or authentication tokens.
+- `homeassistant/` packages the integrated JAR as a Home Assistant local app.
+  Supervisor builds the pinned Java 21 image from a self-contained app folder;
+  port 8080 in the container maps to configurable host port 8090. The trusted
+  HTTPS proxy remains the public origin and the existing MariaDB app stores all
+  server-side data. This packaging does not itself assert that it is deployed.
 
 ## Receipt lifecycle
 
@@ -160,6 +163,33 @@ The bearer-token details in this historical milestone are superseded by 2C.
 - An explicit local-only recovery mode can reset an existing administrator to a
   temporary password, revoke their sessions and exit. Recovery binds only to
   loopback on an ephemeral port and is never an unauthenticated API endpoint.
+
+## Milestone 3: Home Assistant local app
+
+- A Windows PowerShell script builds the PWA and backend in an isolated
+  workspace, runs their tests, verifies the JAR's static assets and stages only
+  the local-app files and JAR. Maven uses a fixed archive timestamp and Git
+  normalizes text line endings to support repeatable builds. The Docker build
+  context cannot access the
+  monorepo or private development data. Base images are pinned by digest.
+- Home Assistant Supervisor supplies validated options in `/data/options.json`.
+  The startup script passes the database settings to Spring without printing
+  them, binds to the container interface, configures a modest Java heap and
+  replaces itself with Java. Supervisor's init and optional health watchdog
+  handle shutdown and restarts. Password options are masked but remain sensitive
+  in Home Assistant app data and backups.
+- Existing Flyway tables, users, sessions, receipts and photo BLOBs remain in
+  the dedicated MariaDB database. If V2 has not been applied, the first start
+  migrates it and bootstraps the first administrator after a verified backup;
+  the old backend must be stopped before that migration. The internal MariaDB
+  hostname and heap are configurable. No HTTPS private key is stored in the app.
+- The origin, service worker and IndexedDB schema are unchanged. HTTPS remains
+  terminated by the existing proxy. No automatic upload or background sync is
+  introduced. The cutover is manual and follows an independent health check.
+- Installation, architecture verification, database backup and restore, upgrades,
+  recovery and resource monitoring are documented in
+  `homeassistant/receiptshooter/DOCS.md`. An app backup is not assumed to back
+  up the separate MariaDB database.
 
 ## Data and reliability
 

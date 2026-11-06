@@ -1,2 +1,5 @@
+* text=auto eol=lf
 /backend/mvnw text eol=lf
 *.cmd text eol=crlf
+/homeassistant/receiptshooter/run.sh text eol=lf
+/homeassistant/tests/*.sh text eol=lf
